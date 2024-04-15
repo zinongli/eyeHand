@@ -3,7 +3,6 @@
 % This is designed to be a very simple "experiment" that can be used to
 % test and/or demonstrate the use of rd_eyeLink.m.
 Screen('Preference', 'SkipSyncTests', 1);
-% cd('C:\Users\labadmin\Documents\ZinongGitHub\eyeHand\eyetrack-tools-master');
 subjectID = 'pilo';
 eyeDataDir = 'eyedata';
 dateTime = clock;                %gets time for seed
@@ -19,7 +18,7 @@ nTrials = 10;
 
 [displayInfo] = startExp(subjectID,datetime,rng);
 [displayInfo] = screenVisuals(displayInfo);
-if exist(['data_eyeHand\' subjectID '\' subjectID '_' expName '_S' num2str(session) '_' date,'_tform.mat']) && redoCalib == 0
+if exist(['data_eyeHand\' subjectID '\' subjectID '_' expName '_S' num2str(session) '_' date,'_tform.mat'],'file') && redoCalib == 0
     load(['data_eyeHand\' subjectID '\' subjectID '_' expName '_S' num2str(session) '_' date,'_tform.mat']) %load calibration incase of restart
     load(['data_eyeHand\' subjectID '\' subjectID '_' expName '_S' num2str(session) '_' date,'_calibration.mat'])
     
