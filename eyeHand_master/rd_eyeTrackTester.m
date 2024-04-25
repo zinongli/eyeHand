@@ -21,7 +21,7 @@ Screen('TextColor', window, 255);
 Screen('TextFont', window, 'Verdana');
 Screen('FillRect', window, 128)
 Screen('Flip', window);
-
+ 
 %% Initialize eye tracker
 [el exitFlag] = rd_eyeLink('eyestart', window, eyeFile);
 if exitFlag
