@@ -144,7 +144,7 @@ for j = 1:block_n
     traEx = NaN(length(randdists),round(displayInfo.framerate * (wait+lifespan(j)+patience)));
     traEy = NaN(length(randdists),round(displayInfo.framerate * (wait+lifespan(j)+patience)));
     trial_n = length(randdists);
-    pDuration = length(randdists);
+    pDuration = length(randdists).*block_n;
     trials = ones(1,trial_n);
     
     i = 0;
@@ -184,7 +184,7 @@ for j = 1:block_n
         
         params(i,1:2) = tar_i;
         params(i,3) = p_eye_i;
-%         params(i,5:6) = p_handCart;
+        params(i,5:6) = [cx,cy];
         params(i,7:8) = tar_i + p_eyeCart; % f_eye
         %         rd_eyeLink('trialstart',  displayInfo.window, {el, i, cx, cy, start_size});
         % Displays a title at the bottom of the eye tracker display
