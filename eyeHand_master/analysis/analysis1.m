@@ -68,13 +68,38 @@ hold off
 
 %%
 eHandRhosRecent = eHandRhos - tarRhos;
-fHandRhosRecent = fHandRhos - fEyeRhos;
+% fHandRhosRecent = fHandRhos - tarRhos;
 
 plot(1:360,eHandRhosRecent,'-o')
 hold on
-plot(1:360,fHandRhosRecent,'-o')
+plot(1:360,copy(:,4),'-o')
+yline(0,'--')
 hold off
+xlabel('Trial #')
+ylabel('Rho Error from Initial Target T_0 (rad)')
+legend('Endpoint','Perturbation')
+title('Reach Error vs Reach Perturbation')
 
+%%
+eHandThetasRecent = eHandThetas - tarThetas;
+% fHandRhosRecent = fHandRhos - tarRhos;
+
+plot(1:360,eHandThetasRecent,'-o')
+hold on
+plot(1:360,copy(:,3),'-o')
+yline(0,'--')
+hold off
+xlabel('Trial #')
+ylabel('Theta Error from Initial Target T_0 (rad)')
+legend('Endpoint','Perturbation')
+title('Reach Error vs Saccade Perturbation')
+%%
+eHandThetasRecent = reshape(eHandThetas - tarThetas,120,3);
+
+plot(1:120,mean(eHandThetasRecent,2),'-o')
+hold on
+plot(1:120,copy(1:120,3),'-o')
+hold off
 %%
 for i = 1:360
 plot(validTraXE(i,:),validTraYE(i,:),'-o')
