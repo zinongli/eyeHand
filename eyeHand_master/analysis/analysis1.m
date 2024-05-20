@@ -21,6 +21,8 @@
 % 24,25: relative target position in mm
 
 %%
+set(0, 'DefaultAxesFontSize', 16); % Set global default font size for axes
+
 index = NaN(length(data),1);
 for i = 1:length(data)
     index(i) = ~isnan(sum(data(i,10:13)));
@@ -52,10 +54,10 @@ copyPro(:,10:11) = valid(:,10:11);
 copyPro(:,12:13) = valid(:,12:13);
 
 %%
-[tarRhos, tarThetas] = cart2pol(copyPro(:,1) - copyPro(:,5), copyPro(:,2) - copyPro(:,6));
-[eHandRhos, eHandThetas] = cart2pol(copyPro(:,10) - copyPro(:,5), copyPro(:,11) - copyPro(:,6));
-[fEyeRhos, fEyeThetas] = cart2pol(copyPro(:,7) - copyPro(:,5), copyPro(:,8) - copyPro(:,6));
-[fHandRhos, fHandThetas] = cart2pol(copyPro(:,12) - copyPro(:,5), copyPro(:,13) - copyPro(:,6));
+[tarThetas, tarRhos] = cart2pol(copyPro(:,1) - copyPro(:,5), copyPro(:,2) - copyPro(:,6));
+[eHandThetas, eHandRhos] = cart2pol(copyPro(:,10) - copyPro(:,5), copyPro(:,11) - copyPro(:,6));
+[fEyeThetas, fEyeRhos] = cart2pol(copyPro(:,7) - copyPro(:,5), copyPro(:,8) - copyPro(:,6));
+[fHandThetas, fHandRhos] = cart2pol(copyPro(:,12) - copyPro(:,5), copyPro(:,13) - copyPro(:,6));
 
 %%
 eHandRhosRecent = reshape(eHandRhos - tarRhos,72,5);
@@ -79,20 +81,189 @@ xlabel('Trial #')
 ylabel('Rho Error from Initial Target T_0 (rad)')
 legend('Endpoint','Perturbation')
 title('Reach Error vs Reach Perturbation')
-
 %%
+figure(1)
+subplot(2,2,1)
 eHandThetasRecent = eHandThetas - tarThetas;
-% fHandRhosRecent = fHandRhos - tarRhos;
 
-plot(1:360,eHandThetasRecent,'-o')
+plot(1:360,rad2deg(eHandThetasRecent),'-o')
 hold on
-plot(1:360,copy(:,3),'-o')
+plot(1:360,rad2deg(copy(:,4)),'-o')
 yline(0,'--')
 hold off
+ylim([-12,12])
 xlabel('Trial #')
-ylabel('Theta Error from Initial Target T_0 (rad)')
-legend('Endpoint','Perturbation')
+ylabel('Rotational Error (deg)')
+legend('Endpoints','Perturbation')
+title('Reach Error vs Reach Perturbation')
+
+subplot(2,2,3)
+eHandRhosRecent = eHandRhos - tarRhos;
+
+plot(1:360,eHandRhosRecent .* proj2tablet .* pixellength,'-o')
+hold on
+plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+yline(0,'--')
+hold off
+ylim([-28,28])
+xlabel('Trial #')
+ylabel('Gain Error (mm)')
+% legend('Endpoints','Perturbation')
 title('Reach Error vs Saccade Perturbation')
+
+subplot(2,2,2)
+% Assuming the data is already loaded in a variable named 'data'
+data = eHandThetasRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(5,'--r')
+hold off
+title('Rotational Adaptation Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+legend('','Perturbation')
+% Enhance plot visibility
+grid on;
+
+subplot(2,2,4)
+% Assuming the data is already loaded in a variable named 'data'
+data = eHandRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(3,'--r')
+hold off
+title('Gain Adaptation Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+
+% Enhance plot visibility
+grid on;
+%%
+figure('Position', [100, 100, 1400, 300]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
+subplot(1,2,1)
+eHandThetasRecent = eHandThetas - tarThetas;
+
+plot(1:360,rad2deg(eHandThetasRecent),'-o')
+hold on
+plot(1:360,rad2deg(copy(:,4)),'-o')
+yline(0,'--')
+hold off
+ylim([-12,12])
+xlim([0,380])
+xlabel('Trial #')
+ylabel('Rotational Error (deg)')
+legend('Endpoints','Perturbation')
+title('Reach Error vs Reach Perturbation')
+
+subplot(1,2,2)
+% Assuming the data is already loaded in a variable named 'data'
+data = eHandThetasRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(5,'--r')
+hold off
+title('Rotational Adaptation Frequency Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+legend('','Perturbation')
+% Enhance plot visibility
+grid on;
+
+%%
+figure('Position', [100, 100, 1400, 400]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
+
+subplot(1,2,1)
+eHandRhosRecent = eHandRhos - tarRhos;
+
+plot(1:360,eHandRhosRecent .* proj2tablet .* pixellength,'-o')
+hold on
+plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+yline(0,'--')
+hold off
+ylim([-28,28])
+xlabel('Trial #')
+ylabel('Gain Error (mm)')
+legend('Endpoints','Perturbation')
+title('Reach Error vs Saccade Perturbation')
+
+
+subplot(1,2,2)
+% Assuming the data is already loaded in a variable named 'data'
+data = eHandRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(3,'--r')
+hold off
+title('Gain Adaptation Frequency Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+legend('','Perturbation')
+% Enhance plot visibility
+grid on;
 %%
 eHandThetasRecent = reshape(eHandThetas - tarThetas,120,3);
 

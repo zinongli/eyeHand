@@ -121,8 +121,8 @@ freqE = 3;
 freqH = 5;
 handPertAxis = "theta";
 eyePertAxis = "rho";
-p_handMag = deg2rad(10);
-p_eyeMag = 10 ./ mmPerProjPx;
+p_handMag = deg2rad(8);
+p_eyeMag = 0.1;
 cursorHomeRadius = 50;
 arrowTipRadius = 20;
 backGround = 50;
@@ -177,7 +177,7 @@ for j = 1:block_n
                 [p_eyeCart(1),p_eyeCart(2)] = pol2cart(theta + p_eye_i,rho);
             case "rho"
                 p_eye_i  = getPertbScalar(freqE,pDuration,waveInd,p_eyeMag);
-                [p_eyeCart(1),p_eyeCart(2)] = pol2cart(theta,rho + p_eye_i);
+                [p_eyeCart(1),p_eyeCart(2)] = pol2cart(theta,rho.*(1+p_eye_i));
         end
         % f_eye = tar_i + p_eyeCart;
         p_eyeCart = p_eyeCart - (tar_i-[cx,cy]);
@@ -384,7 +384,7 @@ for j = 1:block_n
                         [p_handCart(1),p_handCart(2)] = pol2cart(theta + p_hand_i,rho);
                     case "rho"
                         p_hand_i  = getPertbScalar(freqH,pDuration,waveInd,p_handMag);
-                        [p_handCart(1),p_handCart(2)] = pol2cart(theta,rho + p_hand_i);
+                        [p_handCart(1),p_handCart(2)] = pol2cart(theta,rho .* (1+p_hand_i));
                 end
                 params(i,4) = p_hand_i;
                 p_handCart = p_handCart - (xy-[cx,cy]);
