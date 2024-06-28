@@ -21,6 +21,12 @@
 % 24,25: relative target position in mm
 
 %%
+% Define the file name or path
+filename = '0425Sacc1st.csv';
+
+% Read the CSV file into a matrix
+eyeData = readmatrix(filename);
+
 set(0, 'DefaultAxesFontSize', 16); % Set global default font size for axes
 
 index = NaN(length(data),1);
@@ -47,17 +53,18 @@ copyWac(:,7:8) = transformPointsInverse(tform,valid(:,7:8));
 copyWac(:,10:11) = transformPointsInverse(tform,valid(:,10:11));
 copyWac(:,12:13) = transformPointsInverse(tform,valid(:,12:13));
 
-copyPro(:,1:2) = valid(:,1:2);
-copyPro(:,5:6) = valid(:,5:6);
-copyPro(:,7:8) = valid(:,7:8);
-copyPro(:,10:11) = valid(:,10:11);
-copyPro(:,12:13) = valid(:,12:13);
+copyProj(:,1:2) = valid(:,1:2);
+copyProj(:,5:6) = valid(:,5:6);
+copyProj(:,7:8) = valid(:,7:8);
+copyProj(:,10:11) = valid(:,10:11);
+copyProj(:,12:13) = valid(:,12:13);
 
 %%
-[tarThetas, tarRhos] = cart2pol(copyPro(:,1) - copyPro(:,5), copyPro(:,2) - copyPro(:,6));
-[eHandThetas, eHandRhos] = cart2pol(copyPro(:,10) - copyPro(:,5), copyPro(:,11) - copyPro(:,6));
-[fEyeThetas, fEyeRhos] = cart2pol(copyPro(:,7) - copyPro(:,5), copyPro(:,8) - copyPro(:,6));
-[fHandThetas, fHandRhos] = cart2pol(copyPro(:,12) - copyPro(:,5), copyPro(:,13) - copyPro(:,6));
+[tarThetas, tarRhos] = cart2pol(copyProj(:,1) - copyProj(:,5), copyProj(:,2) - copyProj(:,6));
+[eHandThetas, eHandRhos] = cart2pol(copyProj(:,10) - copyProj(:,5), copyProj(:,11) - copyProj(:,6));
+[fEyeThetas, fEyeRhos] = cart2pol(copyProj(:,7) - copyProj(:,5), copyProj(:,8) - copyProj(:,6));
+[fHandThetas, fHandRhos] = cart2pol(copyProj(:,12) - copyProj(:,5), copyProj(:,13) - copyProj(:,6));
+[eEyeThetas, eEyeRhos] = cart2pol(eyeData(:,5) - eyeData(:,3), eyeData(:,6) - eyeData(:,4));
 
 %%
 eHandRhosRecent = reshape(eHandRhos - tarRhos,72,5);
@@ -171,11 +178,100 @@ xlim([-20,180])
 % Enhance plot visibility
 grid on;
 %%
+figure(2)
+subplot(2,2,1)
+eEyeThetasRecent = eEyeThetas - tarThetas;
+
+plot(1:360,rad2deg(eEyeThetasRecent),'-o')
+hold on
+plot(1:360,rad2deg(copy(:,4)),'-o')
+yline(0,'--')
+hold off
+ylim([-12,12])
+xlabel('Trial #')
+ylabel('Rotational Error (deg)')
+legend('Endpoints','Perturbation')
+title('Saccade Error vs Reach Perturbation')
+
+subplot(2,2,3)
+eEyeRhosRecent = eEyeRhos - tarRhos;
+
+plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
+hold on
+plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+yline(0,'--')
+hold off
+ylim([-28,28])
+xlabel('Trial #')
+ylabel('Gain Error (mm)')
+% legend('Endpoints','Perturbation')
+title('Saccade Error vs Saccade Perturbation')
+
+subplot(2,2,2)
+% Assuming the data is already loaded in a variable named 'data'
+data = eEyeThetasRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(5,'--r')
+hold off
+title('Rotational Adaptation Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+legend('','Perturbation')
+% Enhance plot visibility
+grid on;
+
+subplot(2,2,4)
+% Assuming the data is already loaded in a variable named 'data'
+data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+
+% Parameters
+N = length(data);    % Number of data points
+Fs = 360;           % Sampling rate in Hz (replace with your actual sampling rate)
+
+% FFT computation
+fft_data = fft(data);
+
+% Amplitude spectrum calculation
+amplitudes = abs(fft_data(1:N/2+1));
+
+% Frequency axis preparation
+frequencies = (0:N/2) * (Fs / N);
+
+% Plotting the amplitude spectrum
+plot(frequencies, amplitudes,'-');
+hold on
+xline(3,'--r')
+hold off
+title('Gain Adaptation Amplitude');
+xlabel('Cycle per session');
+ylabel('Amplitude');
+xlim([-20,180])
+
+% Enhance plot visibility
+grid on;
+%%
 figure('Position', [100, 100, 1400, 300]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
 subplot(1,2,1)
-eHandThetasRecent = eHandThetas - tarThetas;
+eEyeThetasRecent = eHandThetas - tarThetas;
 
-plot(1:360,rad2deg(eHandThetasRecent),'-o')
+plot(1:360,rad2deg(eEyeThetasRecent),'-o')
 hold on
 plot(1:360,rad2deg(copy(:,4)),'-o')
 yline(0,'--')
@@ -189,7 +285,7 @@ title('Reach Error vs Reach Perturbation')
 
 subplot(1,2,2)
 % Assuming the data is already loaded in a variable named 'data'
-data = eHandThetasRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+data = eEyeThetasRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
@@ -221,9 +317,9 @@ grid on;
 figure('Position', [100, 100, 1400, 400]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
 
 subplot(1,2,1)
-eHandRhosRecent = eHandRhos - tarRhos;
+eEyeRhosRecent = eHandRhos - tarRhos;
 
-plot(1:360,eHandRhosRecent .* proj2tablet .* pixellength,'-o')
+plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
 hold on
 plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
 yline(0,'--')
@@ -237,7 +333,7 @@ title('Reach Error vs Saccade Perturbation')
 
 subplot(1,2,2)
 % Assuming the data is already loaded in a variable named 'data'
-data = eHandRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
@@ -265,9 +361,9 @@ legend('','Perturbation')
 % Enhance plot visibility
 grid on;
 %%
-eHandThetasRecent = reshape(eHandThetas - tarThetas,120,3);
+eEyeThetasRecent = reshape(eHandThetas - tarThetas,120,3);
 
-plot(1:120,mean(eHandThetasRecent,2),'-o')
+plot(1:120,mean(eEyeThetasRecent,2),'-o')
 hold on
 plot(1:120,copy(1:120,3),'-o')
 hold off
@@ -276,9 +372,9 @@ for i = 1:360
 plot(validTraXE(i,:),validTraYE(i,:),'-o')
 hold on
 % plot(copyPro(i,5),copyPro(i,6),'*k','MarkerSize',15)
-plot(copyPro(i,1),copyPro(i,2),'*k','MarkerSize',15)
-plot(copyPro(i,7),copyPro(i,8),'*r','MarkerSize',15)
-plot(copyPro(i,12),copyPro(i,13),'*b','MarkerSize',15)
+plot(copyProj(i,1),copyProj(i,2),'*k','MarkerSize',15)
+plot(copyProj(i,7),copyProj(i,8),'*r','MarkerSize',15)
+plot(copyProj(i,12),copyProj(i,13),'*b','MarkerSize',15)
 hold off
 pause(2)
 end
