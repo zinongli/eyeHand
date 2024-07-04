@@ -22,7 +22,7 @@
 
 %%
 % Define the file name or path
-filename = '0425Sacc1st.csv';
+filename = '0703Sacc1st.csv';
 
 % Read the CSV file into a matrix
 eyeData = readmatrix(filename);
