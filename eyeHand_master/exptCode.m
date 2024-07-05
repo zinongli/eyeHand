@@ -109,7 +109,7 @@ while true
 end
 
 wait = 1;
-flashDur = 0.06;
+flashDur = 0.033;
 trialDur = 2;
 tSize = 10;
 tColor = [0 128 0];
