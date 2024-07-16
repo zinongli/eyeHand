@@ -95,7 +95,7 @@ eHandThetasRecent = eHandThetas - tarThetas;
 
 plot(1:360,rad2deg(eHandThetasRecent),'-o')
 hold on
-plot(1:360,rad2deg(copy(:,4)),'-o')
+plot(1:360,rad2deg(copy(:,4)),'-')
 yline(0,'--')
 hold off
 ylim([-12,12])
