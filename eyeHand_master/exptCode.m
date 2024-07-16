@@ -122,7 +122,7 @@ freqH = 5;
 handPertAxis = "theta";
 eyePertAxis = "rho";
 p_handMag = deg2rad(10);
-p_eyeMag = 50 ./ mmPerProjPx;
+p_eyeMag = 0.25;
 cursorHomeRadius = 50;
 arrowTipRadius = 20;
 backGround = 50;
@@ -315,7 +315,6 @@ for j = 1:block_n
                 abs_onset_time = GetSecs;
                 params(i,9) = abs_onset_time;
                 onset_recorded = 1;
-                break
             end
         end
         Eyelink('Message', 'SaccadeOnset');
