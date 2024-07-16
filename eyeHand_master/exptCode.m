@@ -388,7 +388,7 @@ for j = 1:block_n
                 end
                 params(i,4) = p_hand_i;
                 p_handCart = p_handCart - (xy-[cx,cy]);
-                Screen('DrawDots', displayInfo.window, xy + p_eyeCart + p_handCart, cSize, [128 0 0],[],1);
+                Screen('DrawDots', displayInfo.window, xy + p_handCart, cSize, [128 0 0],[],1);
                 Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                 Screen('Flip', displayInfo.window);
                 if buttons(1) ==0
@@ -406,7 +406,7 @@ for j = 1:block_n
                 
                 if locdiff <= speedthreshold/displayInfo.framerate
                     params(i,10:11) = xy; % e_hand
-                    params(i,12:13) = xy + p_eyeCart + p_handCart; % f_hand
+                    params(i,12:13) = xy + p_handCart; % f_hand
                     end_t = frame / displayInfo.framerate;
                     rest_of_trial = trialDur - end_t;
                     trials(i) = 0;
@@ -416,7 +416,7 @@ for j = 1:block_n
                     %                         Screen('Flip', displayInfo.window);
                     %                         pause(delayB4Fhand);
                     Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
-                    Screen('DrawDots', displayInfo.window, xy + p_eyeCart + p_handCart, cSize, [128 0 0],[],1);
+                    Screen('DrawDots', displayInfo.window, xy + p_handCart, cSize, [128 0 0],[],1);
                     Screen('Flip', displayInfo.window);
                     pause(rest_of_trial);
                     break
