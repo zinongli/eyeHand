@@ -109,7 +109,7 @@ while true
 end
 
 wait = 1;
-flashDur = 0.033;
+flashDur = 0.05;
 trialDur = 2;
 tSize = 10;
 tColor = [0 128 0];
@@ -122,7 +122,7 @@ freqH = 5;
 handPertAxis = "theta";
 eyePertAxis = "rho";
 p_handMag = deg2rad(10);
-p_eyeMag = 50 ./ mmPerProjPx;
+p_eyeMag = 0.25;
 cursorHomeRadius = 50;
 arrowTipRadius = 20;
 backGround = 50;
@@ -284,11 +284,12 @@ for j = 1:block_n
         saccadeOnset = 0;
         Eyelink('Message', 'TargetAppear');
         frame = 1;
-        while ~saccadeOnset
-            frame = frame + 1;
-            DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
+        DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
             Screen('DrawDots',displayInfo.window, params(i,1:2), tSize,tColor,[],1);
             Screen('Flip',displayInfo.window);
+            
+        while ~saccadeOnset
+            
             % talk to eyelink to find eye position
             evt = Eyelink('newestfloatsample');
             domEye = find(evt.gx ~= -32768);
