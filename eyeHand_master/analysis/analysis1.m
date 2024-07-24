@@ -22,7 +22,7 @@
 
 %%
 % Define the file name or path
-filename = '0703Sacc1st.csv';
+filename = '0723Sacc1st.csv';
 
 % Read the CSV file into a matrix
 eyeData = readmatrix(filename);
@@ -36,6 +36,7 @@ for i = 1:length(data)
 end
 
 valid = data(index==true,:);
+validEye = eyeData(index==true,:);
 validTraXH = traXtotalH(index==true,:);
 validTraYH = traYtotalH(index==true,:);
 validTraXE = traXtotalE(index==true,:);
@@ -64,30 +65,12 @@ copyProj(:,12:13) = valid(:,12:13);
 [eHandThetas, eHandRhos] = cart2pol(copyProj(:,10) - copyProj(:,5), copyProj(:,11) - copyProj(:,6));
 [fEyeThetas, fEyeRhos] = cart2pol(copyProj(:,7) - copyProj(:,5), copyProj(:,8) - copyProj(:,6));
 [fHandThetas, fHandRhos] = cart2pol(copyProj(:,12) - copyProj(:,5), copyProj(:,13) - copyProj(:,6));
-[eEyeThetas, eEyeRhos] = cart2pol(eyeData(:,5) - eyeData(:,3), eyeData(:,6) - eyeData(:,4));
+[eEyeThetas, eEyeRhos] = cart2pol(validEye(:,5) - validEye(:,3), validEye(:,6) - validEye(:,4));
+eHandRhos = eHandRhos ./ tarRhos;
+fEyeRhos = fEyeRhos ./ tarRhos;
+fHandRhos = fHandRhos ./ tarRhos;
+eEyeRhos = eEyeRhos ./ tarRhos;
 
-%%
-eHandRhosRecent = reshape(eHandRhos - tarRhos,72,5);
-fHandRhosRecent = reshape(fHandRhos - tarRhos,72,5);
-
-plot(1:72,mean(eHandRhosRecent,2),'-o')
-hold on
-plot(1:72,mean(fHandRhosRecent,2),'-o')
-hold off
-
-%%
-eHandRhosRecent = eHandRhos - tarRhos;
-% fHandRhosRecent = fHandRhos - tarRhos;
-
-plot(1:360,eHandRhosRecent,'-o')
-hold on
-plot(1:360,copy(:,4),'-o')
-yline(0,'--')
-hold off
-xlabel('Trial #')
-ylabel('Rho Error from Initial Target T_0 (rad)')
-legend('Endpoint','Perturbation')
-title('Reach Error vs Reach Perturbation')
 %%
 figure(1)
 subplot(2,2,1)
@@ -105,16 +88,16 @@ legend('Endpoints','Perturbation')
 title('Reach Error vs Reach Perturbation')
 
 subplot(2,2,3)
-eHandRhosRecent = eHandRhos - tarRhos;
+eHandRhosRecent = eHandRhos - 1;
 
-plot(1:360,eHandRhosRecent .* proj2tablet .* pixellength,'-o')
+plot(1:360,eHandRhosRecent,'-o')
 hold on
-plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+plot(1:360,copy(:,3),'-o')
 yline(0,'--')
 hold off
-ylim([-28,28])
+% ylim([-28,28])
 xlabel('Trial #')
-ylabel('Gain Error (mm)')
+ylabel('Gain Error (%)')
 % legend('Endpoints','Perturbation')
 title('Reach Error vs Saccade Perturbation')
 
@@ -150,7 +133,7 @@ grid on;
 
 subplot(2,2,4)
 % Assuming the data is already loaded in a variable named 'data'
-data = eHandRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+data = eHandRhosRecent;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
@@ -194,16 +177,16 @@ legend('Endpoints','Perturbation')
 title('Saccade Error vs Reach Perturbation')
 
 subplot(2,2,3)
-eEyeRhosRecent = eEyeRhos - tarRhos;
+eEyeRhosRecent = eEyeRhos - 1;
 
-plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
+plot(1:360,eEyeRhosRecent,'-o')
 hold on
-plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+plot(1:360,copy(:,3),'-o')
 yline(0,'--')
 hold off
-ylim([-28,28])
+% ylim([-28,28])
 xlabel('Trial #')
-ylabel('Gain Error (mm)')
+ylabel('Gain Error (%)')
 % legend('Endpoints','Perturbation')
 title('Saccade Error vs Saccade Perturbation')
 
@@ -239,7 +222,7 @@ grid on;
 
 subplot(2,2,4)
 % Assuming the data is already loaded in a variable named 'data'
-data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+% data = eEyeRhosRecent;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
