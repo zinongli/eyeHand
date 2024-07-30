@@ -5,8 +5,8 @@ def extract_string_rows(input_file, output_file):
                 outfile.write(line)
 
 # Replace 'input.txt' with the name of your input file and 'output.txt' with the desired output file name
-input_file = 'pilo0703.txt'
-output_file = '0703Event.txt'
+input_file = 'pilo0716.txt'
+output_file = '0716Event.txt'
 extract_string_rows(input_file, output_file)
 
 def parse_trials(input_file, output_file):
@@ -25,6 +25,6 @@ def parse_trials(input_file, output_file):
                 saccade_onset_found = False
 
 # Replace 'input.txt' with the name of your input file and 'output.txt' with the desired output file name
-input_file = '0703Event.txt'
-output_file = '0703Sacc1st.csv'
+input_file = '0716Event.txt'
+output_file = '0716Sacc1st.csv'
 parse_trials(input_file, output_file)

@@ -22,7 +22,7 @@
 
 %%
 % Define the file name or path
-filename = '0703Sacc1st.csv';
+filename = '0716Sacc1st.csv';
 
 % Read the CSV file into a matrix
 eyeData = readmatrix(filename);
@@ -65,7 +65,10 @@ copyProj(:,12:13) = valid(:,12:13);
 [fEyeThetas, fEyeRhos] = cart2pol(copyProj(:,7) - copyProj(:,5), copyProj(:,8) - copyProj(:,6));
 [fHandThetas, fHandRhos] = cart2pol(copyProj(:,12) - copyProj(:,5), copyProj(:,13) - copyProj(:,6));
 [eEyeThetas, eEyeRhos] = cart2pol(eyeData(:,5) - eyeData(:,3), eyeData(:,6) - eyeData(:,4));
-
+eHandRhos = eHandRhos ./ tarRhos;
+fEyeRhos = fEyeRhos ./ tarRhos;
+fHandRhos = fHandRhos ./ tarRhos;
+eEyeRhos = eEyeRhos ./ tarRhos;
 
 %%
 figure(1)
@@ -84,16 +87,16 @@ legend('Endpoints','Perturbation')
 title('Reach Error vs Reach Perturbation')
 
 subplot(2,2,3)
-eHandRhosRecent = eHandRhos - tarRhos;
+eHandRhosRecent = eHandRhos - 1;
 
-plot(1:360,eHandRhosRecent .* proj2tablet .* pixellength,'-o')
+plot(1:360,eHandRhosRecent,'-o')
 hold on
-plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+plot(1:360,copy(:,3),'-o')
 yline(0,'--')
 hold off
-ylim([-28,28])
+ylim([-0.5,0.5])
 xlabel('Trial #')
-ylabel('Gain Error (mm)')
+ylabel('Gain Error (%)')
 % legend('Endpoints','Perturbation')
 title('Reach Error vs Saccade Perturbation')
 
@@ -129,7 +132,7 @@ grid on;
 
 subplot(2,2,4)
 % Assuming the data is already loaded in a variable named 'data'
-data = eHandRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+data = eHandRhosRecent;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
@@ -166,23 +169,23 @@ hold on
 plot(1:360,rad2deg(copy(:,4)),'-o')
 yline(0,'--')
 hold off
-ylim([-12,12])
+ylim([-15,15])
 xlabel('Trial #')
 ylabel('Rotational Error (deg)')
 legend('Endpoints','Perturbation')
 title('Saccade Error vs Reach Perturbation')
 
 subplot(2,2,3)
-eEyeRhosRecent = eEyeRhos - tarRhos;
+eEyeRhosRecent = eEyeRhos - 1;
 
-plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
+plot(1:360,eEyeRhosRecent,'-o')
 hold on
-plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+plot(1:360,copy(:,3) ,'-o')
 yline(0,'--')
 hold off
-ylim([-28,28])
+ylim([-0.5,0.5])
 xlabel('Trial #')
-ylabel('Gain Error (mm)')
+ylabel('Gain Error (%)')
 % legend('Endpoints','Perturbation')
 title('Saccade Error vs Saccade Perturbation')
 
@@ -218,7 +221,7 @@ grid on;
 
 subplot(2,2,4)
 % Assuming the data is already loaded in a variable named 'data'
-data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
+data = eEyeRhosRecent;  % Example data, replace this with your actual data
 
 % Parameters
 N = length(data);    % Number of data points
@@ -291,6 +294,45 @@ grid on;
 % legend('','Perturbation')
 % % Enhance plot visibility
 % grid on;
+
+%%
+% figure('Position', [100, 100, 1400, 400]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
+% 
+% subplot(1,2,1)
+% eEyeRhosRecent = eHandRhos - tarRhos;
+% 
+% plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
+% hold on
+% plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+% yline(0,'--')
+% hold off
+% ylim([-28,28])
+% xlabel('Trial #')
+% ylabel('Gain Error (mm)')
+% legend('Endpoints','Perturbation')
+% title('Reach Error vs Saccade Perturbation')
+% 
+% 
+=======
+% 
+% % Amplitude spectrum calculation
+% amplitudes = abs(fft_data(1:N/2+1));
+% 
+% % Frequency axis preparation
+% frequencies = (0:N/2) * (Fs / N);
+% 
+% % Plotting the amplitude spectrum
+% plot(frequencies, amplitudes,'-');
+% hold on
+% xline(5,'--r')
+% hold off
+% title('Rotational Adaptation Frequency Amplitude');
+% xlabel('Cycle per session');
+% ylabel('Amplitude');
+% xlim([-20,180])
+% legend('','Perturbation')
+% % Enhance plot visibility
+% grid on;
 % 
 % %%
 % figure('Position', [100, 100, 1400, 400]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
@@ -310,6 +352,7 @@ grid on;
 % title('Reach Error vs Saccade Perturbation')
 % 
 % 
+
 % subplot(1,2,2)
 % % Assuming the data is already loaded in a variable named 'data'
 % data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
