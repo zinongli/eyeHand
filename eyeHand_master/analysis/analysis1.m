@@ -34,7 +34,7 @@ for i = 1:length(data)
     index(i) = ~isnan(sum(data(i,10:13)));
     data(i,5:6) = [512,384];
 end
-
+%%
 valid = data(index==true,:);
 validTraXH = traXtotalH(index==true,:);
 validTraYH = traYtotalH(index==true,:);
@@ -313,6 +313,46 @@ grid on;
 % title('Reach Error vs Saccade Perturbation')
 % 
 % 
+=======
+% 
+% % Amplitude spectrum calculation
+% amplitudes = abs(fft_data(1:N/2+1));
+% 
+% % Frequency axis preparation
+% frequencies = (0:N/2) * (Fs / N);
+% 
+% % Plotting the amplitude spectrum
+% plot(frequencies, amplitudes,'-');
+% hold on
+% xline(5,'--r')
+% hold off
+% title('Rotational Adaptation Frequency Amplitude');
+% xlabel('Cycle per session');
+% ylabel('Amplitude');
+% xlim([-20,180])
+% legend('','Perturbation')
+% % Enhance plot visibility
+% grid on;
+% 
+% %%
+% figure('Position', [100, 100, 1400, 400]); % Create a figure window 600x400 pixels, positioned 100 pixels from the left and bottom of the screen
+% 
+% subplot(1,2,1)
+% eEyeRhosRecent = eHandRhos - tarRhos;
+% 
+% plot(1:360,eEyeRhosRecent .* proj2tablet .* pixellength,'-o')
+% hold on
+% plot(1:360,copy(:,3) .* proj2tablet .* pixellength,'-o')
+% yline(0,'--')
+% hold off
+% ylim([-28,28])
+% xlabel('Trial #')
+% ylabel('Gain Error (mm)')
+% legend('Endpoints','Perturbation')
+% title('Reach Error vs Saccade Perturbation')
+% 
+% 
+
 % subplot(1,2,2)
 % % Assuming the data is already loaded in a variable named 'data'
 % data = eEyeRhosRecent .* proj2tablet .* pixellength;  % Example data, replace this with your actual data
