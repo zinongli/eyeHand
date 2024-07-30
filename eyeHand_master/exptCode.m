@@ -109,7 +109,7 @@ while true
 end
 
 wait = 1;
-flashDur = 0.05;
+flashDur = 0.033;
 trialDur = 2;
 tSize = 10;
 tColor = [0 128 0];
@@ -132,6 +132,7 @@ traYtotalE = [];
 traXtotalH = [];
 traYtotalH = [];
 waveInd = 1;
+el = EyelinkInitDefaults();
 for j = 1:block_n
     seeds = [randperm(size(distances,2)), randperm(size(distances,2))];
     randdists = distances(seeds);
@@ -214,12 +215,19 @@ for j = 1:block_n
             [xy(1), xy(2)]  = transformPointsForward(tform,x,y);
             DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
             % talk to eyelink to find eye position
+            evtType = Eyelink('GetNextDataType');
+%             if evtType == el.STARTSACC
+%                 fixation = 0;
+%             end
             evt = Eyelink('newestfloatsample');
+%             if evt.status == el.STARTSACC
+%                 disp('Yes');
+%             end
             domEye = find(evt.gx ~= -32768);
             Ex = evt.gx(domEye);
             Ey = evt.gy(domEye);
             % check for blink
-            if (~isempty(Ex) || ~isempty(Ey)) && norm([Ex, Ey] - [cx, cy])<saccadeStartSize
+            if (~isempty(Ex) || ~isempty(Ey)) && (evtType ~= el.STARTSACC)
                 fixation = 1;
             else
                 fixation = 0;
@@ -284,12 +292,11 @@ for j = 1:block_n
         saccadeOnset = 0;
         Eyelink('Message', 'TargetAppear');
         frame = 1;
-        DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
+        while ~saccadeOnset
+            frame = frame + 1;
+            DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
             Screen('DrawDots',displayInfo.window, params(i,1:2), tSize,tColor,[],1);
             Screen('Flip',displayInfo.window);
-            
-        while ~saccadeOnset
-            
             % talk to eyelink to find eye position
             evt = Eyelink('newestfloatsample');
             domEye = find(evt.gx ~= -32768);
