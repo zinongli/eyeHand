@@ -68,7 +68,7 @@ data = [];
 traXtotalE = [];
 traYtotalE = [];
 testtimes = zeros(1,10000); % 10 seconds
-instruct = 'The experiment will begin.\n Please fixate at the center crosshair and move the cursor there too. \n When a target appears, please look at the target and reach it with your cursor. \n Put the pen on the tablet to start. Press any key to exit.';
+instruct = 'The experiment will begin.\n At the beginning of each trial,\nplease fixate at the center crosshair and move the cursor there too. \n When a target appears, please reach towards the target with your cursor, \nand then look at the target. \n Put the pen on the tablet to start. Press any key to exit.';
 %% Screen
 % pscreenNumber = max(Screen('Screens'))-1;
 % [window,rect] = Screen('OpenWindow', screenNumber);
@@ -109,14 +109,13 @@ while true
 end
 
 wait = 1;
-flashDur = 0.033;
+flashDur = 0.05;
 trialDur = 2;
 tSize = 10;
 tColor = [0 128 0];
 cSize = 10;
 cColor = [128 0 0];
-block_n = 6;
-t_0 = [70,70;-70,70] ./ mmPerProjPx + [cx,cy];
+t_0 = [100,0;-100,0] ./ mmPerProjPx + [cx,cy];
 freqE = 3;
 freqH = 5;
 handPertAxis = "theta";
@@ -132,6 +131,8 @@ traYtotalE = [];
 traXtotalH = [];
 traYtotalH = [];
 waveInd = 1;
+practiceTrialNum = 2;
+fEyePersistTime = 0.5;
 el = EyelinkInitDefaults();
 for j = 1:block_n
     seeds = [randperm(size(distances,2)), randperm(size(distances,2))];
@@ -149,7 +150,7 @@ for j = 1:block_n
     trials = ones(1,trial_n);
     
     i = 0;
-    DrawFormattedText(displayInfo.window,['Next Block: ',num2str(j),'/',num2str(block_n)],'center','center',displayInfo.whiteVal); % not sure how to get this centered yet
+    DrawFormattedText(displayInfo.window,['Next Block: ',num2str(j),'/',num2str(block_n)],'center','center',displayInfo.whiteVal);
     Screen('Flip', displayInfo.window);
     pause(2);
     
@@ -168,6 +169,16 @@ for j = 1:block_n
             trial_n = trial_n + wrong_n;
             trials = zeros(1,trial_n);
             trials(1,origin_trial_n+1:end) = 1;
+        end
+        if practiceTrialNum > 0
+            p_handMag = 0;
+            p_eyeMag = 0;
+            practiceTrialNum = practiceTrialNum - 1;
+        elseif practiceTrialNum == 0
+            waveInd = 1;
+            p_handMag = deg2rad(10);
+            p_eyeMag = 0.25;
+            practiceTrialNum = -1;
         end
         tar_i = t_0(rem(waveInd,2)+1,:);
         theta = atan2(tar_i(2) - cy, tar_i(1) - cx);
@@ -227,7 +238,7 @@ for j = 1:block_n
             Ex = evt.gx(domEye);
             Ey = evt.gy(domEye);
             % check for blink
-            if (~isempty(Ex) || ~isempty(Ey)) && (evtType ~= el.STARTSACC)
+            if (~isempty(Ex) || ~isempty(Ey)) && norm([Ex, Ey] - [cx, cy])<saccadeStartSize
                 fixation = 1;
             else
                 fixation = 0;
@@ -292,19 +303,19 @@ for j = 1:block_n
         saccadeOnset = 0;
         Eyelink('Message', 'TargetAppear');
         frame = 1;
-        while ~saccadeOnset
-            frame = frame + 1;
-            DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
-            Screen('DrawDots',displayInfo.window, params(i,1:2), tSize,tColor,[],1);
-            Screen('Flip',displayInfo.window);
+        DrawFormattedText(displayInfo.window,'+','center','center', displayInfo.blackVal);
+        Screen('DrawDots',displayInfo.window, params(i,1:2), tSize,tColor,[],1);
+        Screen('Flip',displayInfo.window);
+        while ~saccadeOnset            
             % talk to eyelink to find eye position
             evt = Eyelink('newestfloatsample');
             domEye = find(evt.gx ~= -32768);
             Ex = evt.gx(domEye);
             Ey = evt.gy(domEye);
             % check for blink
+            evtType = Eyelink('GetNextDataType');
             if (~isempty(Ex) || ~isempty(Ey))
-                if norm([Ex, Ey] - [cx, cy])<saccadeStartSize
+                if norm([Ex, Ey] - [cx, cy])<saccadeStartSize - 15
                     fixation = 1;
                 else
                     saccadeOnset = 1;
@@ -323,7 +334,6 @@ for j = 1:block_n
                 abs_onset_time = GetSecs;
                 params(i,9) = abs_onset_time;
                 onset_recorded = 1;
-                break
             end
         end
         Eyelink('Message', 'SaccadeOnset');
@@ -396,7 +406,6 @@ for j = 1:block_n
                 end
                 params(i,4) = p_hand_i;
                 p_handCart = p_handCart - (xy-[cx,cy]);
-                Screen('DrawDots', displayInfo.window, xy + p_eyeCart + p_handCart, cSize, [128 0 0],[],1);
                 Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                 Screen('Flip', displayInfo.window);
                 if buttons(1) ==0
@@ -423,6 +432,9 @@ for j = 1:block_n
                     %                         Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                     %                         Screen('Flip', displayInfo.window);
                     %                         pause(delayB4Fhand);
+                    Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
+                    Screen('Flip', displayInfo.window);
+                    pause(fEyePersistTime);
                     Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                     Screen('DrawDots', displayInfo.window, xy + p_eyeCart + p_handCart, cSize, [128 0 0],[],1);
                     Screen('Flip', displayInfo.window);
@@ -454,7 +466,7 @@ for j = 1:block_n
     save(['data_eyeHand\' subj '\' subj '_' expName '_S' num2str(session) '_' date,'_traHYtotal.mat'],'traYtotalH')
 
     while true
-        DrawFormattedText(displayInfo.window,'Block finished. Press any key to proceed to next block.','center','center', displayInfo.whiteVal); % not sure how to get this centered yet
+        DrawFormattedText(displayInfo.window,'Block finished. Press any key to proceed to next block.','center','center', displayInfo.whiteVal);
         Screen('Flip', displayInfo.window);
         if KbCheck
             break
