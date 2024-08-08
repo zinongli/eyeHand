@@ -109,13 +109,13 @@ while true
 end
 
 wait = 1;
-flashDur = 0.033;
+flashDur = 0.05;
 trialDur = 2;
 tSize = 10;
 tColor = [0 128 0];
 cSize = 10;
 cColor = [128 0 0];
-t_0 = [100,0;-70,0] ./ mmPerProjPx + [cx,cy];
+t_0 = [100,0;-100,0] ./ mmPerProjPx + [cx,cy];
 freqE = 3;
 freqH = 5;
 handPertAxis = "theta";
@@ -131,7 +131,7 @@ traYtotalE = [];
 traXtotalH = [];
 traYtotalH = [];
 waveInd = 1;
-practiceTrialNum = 2;
+practiceTrialNum = 20;
 fEyePersistTime = 0.5;
 el = EyelinkInitDefaults();
 for j = 1:block_n
@@ -315,7 +315,7 @@ for j = 1:block_n
             % check for blink
             evtType = Eyelink('GetNextDataType');
             if (~isempty(Ex) || ~isempty(Ey))
-                if norm([Ex, Ey] - [cx, cy])<saccadeStartSize - 20
+                if norm([Ex, Ey] - [cx, cy])<saccadeStartSize - 15
                     fixation = 1;
                 else
                     saccadeOnset = 1;
@@ -435,6 +435,7 @@ for j = 1:block_n
                     Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                     Screen('Flip', displayInfo.window);
                     pause(fEyePersistTime);
+                    Screen('DrawDots',displayInfo.window, params(i,7:8), tSize,[0 128 0],[],1);
                     Screen('DrawDots', displayInfo.window, xy + p_eyeCart + p_handCart, cSize, [128 0 0],[],1);
                     Screen('Flip', displayInfo.window);
                     pause(rest_of_trial);

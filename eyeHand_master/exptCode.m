@@ -7,7 +7,7 @@ dateTime = clock;                %gets time for seed
 rng(sum(100*dateTime) );
 expName = 'practice';
 session = 01;
-redoCalib = 0;
+redoCalib = 1;
 eyeFile = sprintf('%s%s', subjectID, datestr(now, 'mmdd'));
 
 nTrials = 10;
@@ -50,7 +50,7 @@ WindowWidth = 1024; % projector window width
 yCenter = 384; % projector screen y center
 rep = 5;
 totalTime = 3;
-block_n = 6;
+block_n = 5;
 
 distances = linspace(edgesize,WindowWidth-edgesize,dists_n+2)-edgesize;
 distances = repmat(distances(2:end-1),1,sizes_n*rep) .* mmPerProjPx;
@@ -131,7 +131,7 @@ traYtotalE = [];
 traXtotalH = [];
 traYtotalH = [];
 waveInd = 1;
-practiceTrialNum = 2;
+practiceTrialNum = 20;
 fEyePersistTime = 0.5;
 el = EyelinkInitDefaults();
 for j = 1:block_n
